@@ -161,8 +161,8 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
         <div class="bill">
             <div class="bill-header">
                 <div class="bill-header-left">
-                    <h3>Piyo Mithila</h3>
-                    <p>Mobile: +919473012190</p>
+                    <h3>Shivam Fancy Crackers</h3>
+                    <p>Mobile: +918210012972</p>
                 </div>
                 <div class="bill-header-right">
                     <p>Invoice Date: ${date}</p>
