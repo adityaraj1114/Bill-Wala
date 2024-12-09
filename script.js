@@ -16,10 +16,12 @@ function refreshProductDropdowns() {
         .map(([name, price]) => `<option value="${name}">${name} - ₹${price.toFixed(2)}</option>`)
         .join('');
     document.querySelectorAll('.product').forEach(select => {
+        const currentValue = select.value; // Preserve selected value
         select.innerHTML = `
             <option value="" disabled selected>Choose a product</option>
             ${productOptions}
         `;
+        select.value = currentValue; // Reapply selected value
     });
 }
 
@@ -89,33 +91,61 @@ document.getElementById('productList').addEventListener('click', (event) => {
     }
 });
 
-// Initial load
-refreshProductList();
-refreshProductDropdowns();
+// Function to refresh product dropdowns
+function refreshProductDropdowns() {
+    const productOptions = Object.entries(prices)
+        .map(([name, price]) => `<option value="${name}">${name} - ₹${price.toFixed(2)}</option>`)
+        .join('');
+    document.querySelectorAll('.product').forEach(select => {
+        select.innerHTML = `
+            <option value="" disabled selected>Choose a product</option>
+            ${productOptions}
+        `;
+        // Reinitialize Select2 for this dropdown
+        $(select).select2({
+            placeholder: 'Search and select a product',
+            allowClear: true,
+        });
+    });
+}
 
+// Initialize Select2 for existing dropdowns
+$(document).ready(() => {
+    $('.searchable-dropdown').select2({
+        placeholder: 'Search and select a product',
+        allowClear: true,
+    });
+});
 
-// --------------------------------------------------
-
-
-
-// Add a new product row
+// Add a new product row with a searchable dropdown
 document.getElementById('addProductBtn').addEventListener('click', () => {
     const productRows = document.getElementById('productRows');
     const productRow = document.createElement('div');
     productRow.classList.add('productRow');
     productRow.innerHTML = `
         <label for="product">Select Product:</label>
-        <select class="product" required>
+        <select id="searchable" class="product searchable-dropdown" required>
             <option value="" disabled selected>Choose a product</option>
-            <option value="Kulhar">Kulhar - ₹1.75</option>
-            <option value="Water Bottle">Water Bottle - ₹10</option>
+            ${Object.entries(prices).map(([name, price]) => `
+                <option value="${name}">${name} - ₹${price.toFixed(2)}</option>
+            `).join('')}
         </select>
-
         <label for="quantity">Enter Quantity:</label>
         <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
     `;
     productRows.appendChild(productRow);
+
+    // Initialize Select2 for the newly added dropdown
+    $(productRow.querySelector('.product')).select2({
+        placeholder: 'Search and select a product',
+        allowClear: true,
+    });
 });
+
+// Refresh products and product dropdowns on changes
+refreshProductList();
+refreshProductDropdowns();
+  
 
 // Generate Bill Button Logic
 document.getElementById('generateBillBtn').addEventListener('click', () => {
@@ -161,7 +191,7 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
         <div class="bill">
             <div class="bill-header">
                 <div class="bill-header-left">
-                    <h3>Shivam Fancy Crackers</h3>
+                    <h3>Shivam Crackers</h3>
                     <p>Mobile: +918210012972</p>
                 </div>
                 <div class="bill-header-right">
@@ -199,27 +229,21 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
             <div class="total">
                 <p><strong>Total Amount:</strong> ₹${total.toFixed(2)}</p>
             </div>
-
-            
-
             <hr>
             <div class="bill-footer">
                 <p><strong>Terms and Conditions:</strong></p>
                 <ol>
                     <li>Goods once sold will not be taken back or exchanged.</li>
-                    <li>All disputes are subject to [Your City] jurisdiction only.</li>
+                    <li>All disputes are subject to Madhubani jurisdiction only.</li>
                 </ol>
             </div>
         </div>
     `;
 
-    shareOptions.style.display = 'block'
+    shareOptions.style.display = 'block';
+
+    
 });
-
-
-
-
-
 
 // Share Bill Button Logic (Share as Image)
 document.getElementById('shareBillBtn').addEventListener('click', async () => {
@@ -242,7 +266,7 @@ document.getElementById('shareBillBtn').addEventListener('click', async () => {
         // Use the navigator.share API for sharing
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
-                title: 'Piyo Mithila Invoice',
+                title: 'Shivam Crackers Invoice',
                 text: 'Here is your bill:',
                 files: [file],
             });
@@ -258,7 +282,6 @@ document.getElementById('shareBillBtn').addEventListener('click', async () => {
         alert('Failed to share the bill image. Please try again.');
     }
 });
-
 
 document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
     const { jsPDF } = window.jspdf;
@@ -291,5 +314,6 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
 });
 
 
-
-
+// Initial load
+refreshProductList();
+refreshProductDropdowns();

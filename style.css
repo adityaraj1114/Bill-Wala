@@ -22,8 +22,8 @@ header {
 }
 
 header h1 {
-    font-size: 2rem;
-    color: blue;
+    font-size: 10vw;
+    color: rgb(23, 23, 41);
 }
 
 header p {
@@ -46,6 +46,7 @@ form label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    margin-top: 10px;
 }
 
 form select,
@@ -170,10 +171,22 @@ label {
     margin-bottom: 5px;
 }
 
-input,
-select,
-button {
+input {
+    width: 94%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+select{
     width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+button {
+    /* width: 100%; */
     padding: 8px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -283,4 +296,93 @@ td {
 .sub-total {
     margin-top: 15px;
     line-height: 8px;
+}
+
+/* ----------------------------------------- */
+
+/* General styling for Select2 container */
+.select2-container {
+    width: 100% !important; /* Ensure it spans the full width of the parent container */
+    font-family: Arial, sans-serif;
+    height: 100%;
+}
+
+/* Styling for the dropdown input box */
+.select2-selection {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    height: 38px; /* Matches typical input height */
+    background-color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Placeholder text styling */
+.select2-selection__placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Focus state for the input box */
+.select2-selection:focus, 
+.select2-selection:hover {
+    border-color: #007bff; /* Bootstrap blue or adjust to your theme */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Dropdown menu */
+.select2-dropdown {
+    border: 8px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    z-index: 9999; /* Ensure it appears above other elements */
+}
+
+/* Options inside the dropdown */
+.select2-results__option {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Highlighted option */
+.select2-results__option--highlighted {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Disabled option */
+.select2-results__option[aria-disabled="true"] {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Loading indicator */
+.select2-results__message {
+    font-size: 14px;
+    color: #666666;
+    padding: 10px;
+    text-align: center;
+}
+
+#searchable-dropdown {
+    color: red;
+}
+
+.top-image {
+    height: 100%;
+    width: 100%;
+}
+
+header {
+    background-color: #dcf377;
+    padding: 10px 0 10px 0;
+    border-radius: 8px;
+}
+
+.deleteProductBtn {
+    background-color: rgb(161, 20, 20);
 }
