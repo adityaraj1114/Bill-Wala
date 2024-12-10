@@ -25,11 +25,21 @@ function refreshProductDropdowns() {
     });
 }
 
-// Refresh the product list in the management section
-function refreshProductList() {
+// Refresh product list
+function refreshProductList(searchTerm = "") {
     const productList = document.getElementById('productList');
     productList.innerHTML = '';
-    Object.entries(prices).forEach(([name, price]) => {
+
+    const filteredProducts = Object.entries(prices).filter(([name]) =>
+        name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (filteredProducts.length === 0) {
+        productList.innerHTML = "<li>No matching products found.</li>";
+        return;
+    }
+
+    filteredProducts.forEach(([name, price]) => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `
             ${name} - ₹${price.toFixed(2)}
@@ -39,6 +49,7 @@ function refreshProductList() {
         productList.appendChild(listItem);
     });
 }
+
 
 // Add a new product to the prices object
 document.getElementById('addProductToListBtn').addEventListener('click', () => {
@@ -60,6 +71,13 @@ document.getElementById('addProductToListBtn').addEventListener('click', () => {
     refreshProductList();
     refreshProductDropdowns();
 });
+
+// Search Product
+document.getElementById('searchProductInput').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.trim();
+    refreshProductList(searchTerm);
+});
+
 
 // Handle edit and delete actions for products
 document.getElementById('productList').addEventListener('click', (event) => {
@@ -91,23 +109,25 @@ document.getElementById('productList').addEventListener('click', (event) => {
     }
 });
 
-// Function to refresh product dropdowns
+// Refresh the product dropdown options without resetting selected values
 function refreshProductDropdowns() {
-    const productOptions = Object.entries(prices)
-        .map(([name, price]) => `<option value="${name}">${name} - ₹${price.toFixed(2)}</option>`)
-        .join('');
     document.querySelectorAll('.product').forEach(select => {
+        const currentValue = select.value; // Preserve selected value
+
+        const productOptions = Object.entries(prices)
+            .map(([name, price]) => `
+                <option value="${name}" ${currentValue === name ? 'selected' : ''}>
+                    ${name} - ₹${price.toFixed(2)}
+                </option>
+            `).join('');
+
         select.innerHTML = `
-            <option value="" disabled selected>Choose a product</option>
+            <option value="" disabled ${currentValue ? '' : 'selected'}>Choose a product</option>
             ${productOptions}
         `;
-        // Reinitialize Select2 for this dropdown
-        $(select).select2({
-            placeholder: 'Search and select a product',
-            allowClear: true,
-        });
     });
 }
+
 
 // Initialize Select2 for existing dropdowns
 $(document).ready(() => {
@@ -117,30 +137,26 @@ $(document).ready(() => {
     });
 });
 
-// Add a new product row with a searchable dropdown
-document.getElementById('addProductBtn').addEventListener('click', () => {
+// Add product row
+function addProductRow() {
     const productRows = document.getElementById('productRows');
     const productRow = document.createElement('div');
     productRow.classList.add('productRow');
     productRow.innerHTML = `
-        <label for="product">Select Product:</label>
-        <select id="searchable" class="product searchable-dropdown" required>
-            <option value="" disabled selected>Choose a product</option>
-            ${Object.entries(prices).map(([name, price]) => `
-                <option value="${name}">${name} - ₹${price.toFixed(2)}</option>
-            `).join('')}
-        </select>
-        <label for="quantity">Enter Quantity:</label>
+        <label>Select Product:</label>
+        <select class="product searchable-dropdown" required></select>
+
+        <label>Enter Quantity:</label>
         <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
+
+        <label>Discount (%)</label>
+        <input type="number" class="item-discount" min="0" max="100" value="0">
     `;
     productRows.appendChild(productRow);
+    refreshProductDropdowns();
+}
 
-    // Initialize Select2 for the newly added dropdown
-    $(productRow.querySelector('.product')).select2({
-        placeholder: 'Search and select a product',
-        allowClear: true,
-    });
-});
+document.getElementById('addProductBtn').addEventListener('click', addProductRow);
 
 // Refresh products and product dropdowns on changes
 refreshProductList();
@@ -162,16 +178,18 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
     productRows.forEach(row => {
         const product = row.querySelector('.product').value;
         const quantity = parseInt(row.querySelector('.quantity').value, 10);
+        const discount = parseFloat(row.querySelector('.item-discount').value) || 0;
 
-        if (!product || isNaN(quantity) || quantity <= 0) {
-            alert('Please fill out all product details correctly.');
+        if (!product || isNaN(quantity) || quantity <= 0 || discount < 0 || discount > 100) {
+            alert('Please fill out product details correctly.');
             return;
         }
 
         const price = prices[product];
-        const amount = price * quantity;
+        const discountedPrice = price - (price * (discount / 100));
+        const amount = discountedPrice * quantity;
         subtotal += amount;
-        products.push({ product, quantity, price, amount });
+        products.push({ product, quantity, price, discount, amount });
     });
 
     // Apply discount
@@ -207,6 +225,7 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
                         <th>Item</th>
                         <th>Quantity</th>
                         <th>Rate</th>
+                        <th>Discount</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
@@ -216,6 +235,7 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
                             <td>${p.product}</td>
                             <td>${p.quantity}</td>
                             <td>₹${p.price.toFixed(2)}</td>
+                            <td>${p.discount}%</td>
                             <td>₹${p.amount.toFixed(2)}</td>
                         </tr>
                     `).join('')}
@@ -224,7 +244,7 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
             <div class="sub-total">
                 <p><strong>Subtotal:</strong> ₹${subtotal.toFixed(2)}</p>
                 <p><strong>Tax (0%):</strong> ₹0.00</p>
-                <p><strong>Discount:</strong> ₹${discount.toFixed(2)}</p>
+                <p><strong>Total Discount:</strong> ₹${discount.toFixed(2)}</p>
             </div>
             <div class="total">
                 <p><strong>Total Amount:</strong> ₹${total.toFixed(2)}</p>

@@ -1,106 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bill Wala - Generate Bill</title>
-    <link rel="stylesheet" href="style.css" />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container">
-      <header>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <header>
         <h1>Bill Wala</h1>
-        <img class="top-image" src="https://images.pexels.com/photos/6195481/pexels-photo-6195481.jpeg?auto=compress&cs=tinysrgb&w=600" alt="image"/>
-        <p>Generate your bill with Tradition!</p>
-      </header>
+        <p>Generate your bill with ease!</p>
+    </header>
 
-      <!-- -----------------------------------------------      -->
-      <section class="billing-form">
+    <section class="billing-form">
         <h2>Generate Bill</h2>
         <form id="billingForm">
-          <label for="customerName">Bill To (Customer Name):</label>
-          <input
-            type="text"
-            id="customerName"
-            placeholder="Enter customer name"
-            required
-          />
-          <div id="productRows">
-            <div class="productRow">
-              <!-- <label for="product">Select Product:</label>
-                        <select class="product" required>
-                            <option value="" disabled selected>Choose a product</option>
-                            <option value="Kulhar">Shirt - ₹1275</option>
-                            <option value="Water Bottle">Belt - ₹300</option>
-                        </select> -->
+            <label for="customerName">Bill To (Customer Name):</label>
+            <input type="text" id="customerName" placeholder="Enter customer name" required>
 
-              <label for="product">Select Product:</label>
-              <select id="searchable" class="product searchable-dropdown" required>
-                <!-- Options will be dynamically loaded -->
-              </select>
+            <div id="productRows"></div>
+            <button type="button" id="addProductBtn">Add Product</button>
 
-              <label for="quantity">Enter Quantity:</label>
-              <input
-                type="number"
-                class="quantity"
-                min="1"
-                placeholder="Enter quantity"
-                required
-              />
-            </div>
-          </div>
-          <button type="button" id="addProductBtn">Add Product</button>
-
-          <label for="discount">Discount (₹):</label>
-          <input
-            type="number"
-            id="discount"
-            min="0"
-            placeholder="Enter discount (optional)"
-          />
-          <button type="button" id="generateBillBtn">Generate Bill</button>
+            <label for="discount">Overall Discount (₹):</label>
+            <input type="number" id="discount" min="0" placeholder="Enter discount (optional)">
+            <button type="button" id="generateBillBtn">Generate Bill</button>
         </form>
-      </section>
-      <section class="bill-display">
+    </section>
+
+    <section class="bill-display">
         <h2>Bill Details</h2>
         <div id="billOutput"></div>
-        <div id="shareOptions" style="display: none">
-          <button id="shareBillBtn">Share Bill</button>
-          <!-- <div class="whatsapp-share">
-                    <input type="text" id="whatsappNumber" placeholder="Enter WhatsApp number">
-                    <button id="sendWhatsAppBtn">Send via WhatsApp</button>
-                </div> -->
-          <button id="downloadPdfBtn">Download PDF</button>
+        <div id="shareOptions" style="display: none;">
+            <button id="shareBillBtn">Share Bill</button>
+            <button id="downloadPdfBtn">Download PDF</button>
         </div>
-      </section>
-      <div id="productManagement">
+    </section>
+
+    <div id="productManagement">
         <h3>Manage Products</h3>
         <div>
-          <input type="text" id="newProductName" placeholder="Product Name" />
-          <input
-            type="number"
-            id="newProductPrice"
-            placeholder="Product Price (₹)"
-            min="0.01"
-            step="0.01"
-          />
-          <button id="addProductToListBtn">Add Product</button>
+            <input type="text" id="newProductName" placeholder="Product Name">
+            <input type="number" id="newProductPrice" placeholder="Product Price (₹)" min="0.01" step="0.01">
+            <button id="addProductToListBtn">Add Product</button>
         </div>
-        <h4>Current Products:{}</h4>
+
+        <h4>Current Products:</h4>
+        <input type="text" id="searchProductInput" placeholder="Search Product...">
         <ol id="productList"></ol>
-      </div>
     </div>
+</div>
 
-    <!-- <a href="/manage.html">Manage Products</a> -->
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
-  </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
 </html>
