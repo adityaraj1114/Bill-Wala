@@ -1,3 +1,5 @@
+
+
 // Initialize prices object from localStorage or use defaults
 const defaultPrices = {
     "Kulhar": 1.75,
@@ -137,26 +139,58 @@ $(document).ready(() => {
     });
 });
 
-// Add product row
-function addProductRow() {
-    const productRows = document.getElementById('productRows');
-    const productRow = document.createElement('div');
-    productRow.classList.add('productRow');
-    productRow.innerHTML = `
-        <label>Select Product:</label>
-        <select class="product searchable-dropdown" required></select>
+document.addEventListener('DOMContentLoaded', () => {
+    // Add product row function
+    function addProductRow() {
+        const productRows = document.getElementById('productRows');
+        
+        // Ensure the element exists
+        if (!productRows) {
+            console.error("Element with ID 'productRows' not found.");
+            return;
+        }
 
-        <label>Enter Quantity:</label>
-        <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
+        const productRow = document.createElement('div');
+        productRow.classList.add('productRow');
+        productRow.innerHTML = `
+            <label>Select Product:</label>
+            <select class="product searchable-dropdown" required></select>
 
-        <label>Discount (%)</label>
-        <input type="number" class="item-discount" min="0" max="100" value="0">
-    `;
-    productRows.appendChild(productRow);
-    refreshProductDropdowns();
-}
+            <label>Enter Quantity:</label>
+            <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
 
-document.getElementById('addProductBtn').addEventListener('click', addProductRow);
+            <label>Discount (%)</label>
+            <input type="number" class="item-discount" min="0" max="100" value="0">
+        `;
+        productRows.appendChild(productRow);
+        refreshProductDropdowns();
+    }
+
+    // Example Button Event Listener
+    document.getElementById('addProductBtn').addEventListener('click', addProductRow);
+});
+
+
+// // Add product row
+// function addProductRow() {
+//     const productRows = document.getElementById('productRows');
+//     const productRow = document.createElement('div');
+//     productRow.classList.add('productRow');
+//     productRow.innerHTML = `
+//         <label>Select Product:</label>
+//         <select class="product searchable-dropdown" required></select>
+
+//         <label>Enter Quantity:</label>
+//         <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
+
+//         <label>Discount (%)</label>
+//         <input type="number" class="item-discount" min="0" max="100" value="0">
+//     `;
+//     productRows.appendChild(productRow);
+//     refreshProductDropdowns();
+// }
+
+// document.getElementById('addProductBtn').addEventListener('click', addProductRow);
 
 // Refresh products and product dropdowns on changes
 refreshProductList();
@@ -332,6 +366,159 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
         alert('Failed to generate the PDF. Please try again.');
     }
 });
+
+// ---------------------------------------------------
+
+// Initialize the cart
+let cart = [];
+
+// Clear product inputs
+function clearProductInputs() {
+    document.querySelector('.product').value = '';
+    document.querySelector('.quantity').value = '';
+}
+
+// Update Cart UI
+function updateCart() {
+    const cartList = document.getElementById('cartList');
+    cartList.innerHTML = '';
+
+    if (cart.length === 0) {
+        cartList.innerHTML = '<li>No products in the cart.</li>';
+        return;
+    }
+
+    cart.forEach((product, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            ${product.name} - ₹${product.price.toFixed(2)} (Qty: ${product.quantity})(per-${product.discountedPrice})
+            <button class="removeProductBtn" data-index="${index}">Remove</button>
+        `;
+        cartList.appendChild(listItem);
+    });
+}
+
+// Add Product to Cart
+function addProductToCart() {
+    const productSelect = document.querySelector('.product');
+    const productQuantity = document.querySelector('.quantity').value;
+
+    if (!productSelect.value || productQuantity <= 0) {
+        alert('Please select a product and enter a valid quantity.');
+        return;
+    }
+
+    const product = {
+        name: productSelect.value,
+        price: prices[productSelect.value],
+        quantity: parseInt(productQuantity, 10),
+    };
+
+    cart.push(product);  // Add to Cart
+    clearProductInputs();
+    updateCart();
+}
+
+// Show Cart Modal
+document.getElementById('cartBtn').addEventListener('click', () => {
+    document.getElementById('cartModal').style.display = 'block';
+    updateCart();
+});
+
+// Close Cart Modal
+document.getElementById('closeCartModal').addEventListener('click', () => {
+    document.getElementById('cartModal').style.display = 'none';
+});
+
+// Remove Product from Cart
+document.getElementById('cartList').addEventListener('click', (e) => {
+    if (e.target.classList.contains('removeProductBtn')) {
+        const index = parseInt(e.target.dataset.index, 10);
+        cart.splice(index, 1); // Remove from Cart
+        updateCart();
+    }
+});
+
+// Generate Bill Button Logic
+document.getElementById('generateBillBtn').addEventListener('click', () => {
+    const customerName = document.getElementById('customerName').value.trim();
+    const discountInput = parseFloat(document.getElementById('discount').value) || 0;
+    const billOutput = document.getElementById('billOutput');
+    const shareOptions = document.getElementById('shareOptions');
+
+    if (cart.length === 0) {
+        alert('No products in the cart. Please add products first.');
+        return;
+    }
+
+    // Calculate Bill Details
+    let subtotal = cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+    const total = subtotal - discountInput;
+
+    const now = new Date();
+    const date = now.toLocaleDateString();
+    const time = now.toLocaleTimeString();
+
+    // Render Bill Output
+    billOutput.innerHTML = `
+        <div class="bill">
+            <div class="bill-header">
+                <div class="bill-header-left">
+                    <h3>Shivam Crackers</h3>
+                    <p>Mobile: +918210012972</p>
+                </div>
+                <div class="bill-header-right">
+                    <p>Invoice Date: ${date}</p>
+                    <p>Time: ${time}</p>
+                </div>
+            </div>
+            <p><strong>Bill To:</strong> ${customerName || "Customer"}</p>
+            <hr>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${cart.map(p => `
+                        <tr>
+                            <td>${p.name}</td>
+                            <td>${p.quantity}</td>
+                            <td>₹${p.price.toFixed(2)}</td>
+                            <td>₹${(p.price * p.quantity).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <div class="sub-total">
+                <p><strong>Subtotal:</strong> ₹${subtotal.toFixed(2)}</p>
+                <p><strong>Overall Discount:</strong> ₹${discountInput.toFixed(2)}</p>
+            </div>
+            <div class="total">
+                <p><strong>Total Amount:</strong> ₹${total.toFixed(2)}</p>
+            </div>
+            <hr>
+            <div class="bill-footer">
+                <p><strong>Terms and Conditions:</strong></p>
+                <ol>
+                    <li>Goods once sold will not be taken back or exchanged.</li>
+                    <li>All disputes are subject to Madhubani jurisdiction only.</li>
+                </ol>
+            </div>
+        </div>
+    `;
+
+    shareOptions.style.display = 'block';
+});
+
+// Add Product on Button Click
+document.getElementById('addProductBtn').addEventListener('click', addProductToCart);
+
+ 
 
 
 // Initial load

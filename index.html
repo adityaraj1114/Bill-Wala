@@ -1,61 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bill Wala - Generate Bill</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container">
-    <header>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
         <h1>Bill Wala</h1>
         <p>Generate your bill with ease!</p>
-    </header>
+      </header>
 
-    <section class="billing-form">
-        <h2>Generate Bill</h2>
-        <form id="billingForm">
-            <label for="customerName">Bill To (Customer Name):</label>
-            <input type="text" id="customerName" placeholder="Enter customer name" required>
+      <section class="billing-form">
+    <h2>Generate Bill</h2>
+    <form id="billingForm">
+        <label for="customerName">Bill To (Customer Name):</label>
+        <input type="text" id="customerName" placeholder="Enter customer name" required>
 
-            <div id="productRows"></div>
-            <button type="button" id="addProductBtn">Add Product</button>
+        <div>
+            <div id="productSection">
+                <label>Select Product:</label>
+                <select class="product searchable-dropdown" required>
+                    <option value="" disabled selected>Choose a product</option>
+                </select>
+    
+                <label>Enter Quantity:</label>
+                <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
+            </div>
+    
+            <label>Discount (%)</label>
+            <input type="number" class="item-discount" min="0" max="100" value="0">
+        </div>
 
-            <label for="discount">Overall Discount (₹):</label>
-            <input type="number" id="discount" min="0" placeholder="Enter discount (optional)">
-            <button type="button" id="generateBillBtn">Generate Bill</button>
-        </form>
-    </section>
+        <button type="button" id="addProductBtn">Add Product</button>
+        <button type="button" id="cartBtn">Cart</button>
 
-    <section class="bill-display">
+        <label for="discount">Overall Discount (₹):</label>
+        <input type="number" id="discount" min="0" placeholder="Enter discount (optional)">
+        <button type="button" id="generateBillBtn">Generate Bill</button>
+    </form>
+</section>
+
+
+      <section class="bill-display">
         <h2>Bill Details</h2>
         <div id="billOutput"></div>
-        <div id="shareOptions" style="display: none;">
-            <button id="shareBillBtn">Share Bill</button>
-            <button id="downloadPdfBtn">Download PDF</button>
+        <div id="shareOptions" style="display: none">
+          <button id="shareBillBtn">Share Bill</button>
+          <button id="downloadPdfBtn">Download PDF</button>
         </div>
-    </section>
+      </section>
 
-    <div id="productManagement">
+      <div id="productManagement">
         <h3>Manage Products</h3>
         <div>
-            <input type="text" id="newProductName" placeholder="Product Name">
-            <input type="number" id="newProductPrice" placeholder="Product Price (₹)" min="0.01" step="0.01">
-            <button id="addProductToListBtn">Add Product</button>
+          <input type="text" id="newProductName" placeholder="Product Name" />
+          <input
+            type="number"
+            id="newProductPrice"
+            placeholder="Product Price (₹)"
+            min="0.01"
+            step="0.01"
+          />
+          <button id="addProductToListBtn">Add Product</button>
         </div>
 
         <h4>Current Products:</h4>
-        <input type="text" id="searchProductInput" placeholder="Search Product...">
+        <input
+          type="text"
+          id="searchProductInput"
+          placeholder="Search Product..."
+        />
         <ol id="productList"></ol>
-    </div>
-</div>
+      </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-<script src="script.js"></script>
-</body>
+      <!-- Cart Modal Popup -->
+      <div id="cartModal" class="modal" style="display: none">
+        <div class="modal-content">
+          <span id="closeCartModal" class="close">&times;</span>
+          <h2>Cart Details</h2>
+          <ol id="cartList"></ol>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
