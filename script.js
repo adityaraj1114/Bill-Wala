@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Ensure the element exists
         if (!productRows) {
-            console.error("Element with ID 'productRows' not found.");
+            // console.error("Element with ID 'productRows' not found.");
             return;
         }
 
@@ -171,26 +171,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// // Add product row
-// function addProductRow() {
-//     const productRows = document.getElementById('productRows');
-//     const productRow = document.createElement('div');
-//     productRow.classList.add('productRow');
-//     productRow.innerHTML = `
-//         <label>Select Product:</label>
-//         <select class="product searchable-dropdown" required></select>
+// Add product row
+function addProductRow() {
+    const productRows = document.getElementById('productRows');
+    const productRow = document.createElement('div');
+    productRow.classList.add('productRow');
+    productRow.innerHTML = `
+        <label>Select Product:</label>
+        <select class="product searchable-dropdown" required></select>
 
-//         <label>Enter Quantity:</label>
-//         <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
+        <label>Enter Quantity:</label>
+        <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
 
-//         <label>Discount (%)</label>
-//         <input type="number" class="item-discount" min="0" max="100" value="0">
-//     `;
-//     productRows.appendChild(productRow);
-//     refreshProductDropdowns();
-// }
+        <label>Discount (%)</label>
+        <input type="number" class="item-discount" min="0" max="100" value="0">
+    `;
+    productRows.appendChild(productRow);
+    refreshProductDropdowns();
+}
 
-// document.getElementById('addProductBtn').addEventListener('click', addProductRow);
+document.getElementById('addProductBtn').addEventListener('click', addProductRow);
 
 // Refresh products and product dropdowns on changes
 refreshProductList();
@@ -229,7 +229,7 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
     // Apply discount
     const discount = parseFloat(discountInput.value) || 0;
     if (discount < 0 || discount > subtotal) {
-        alert('Invalid discount amount.');
+        // alert('Invalid discount amount.');
         return;
     }
 
@@ -357,7 +357,7 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
             callback: (doc) => {
                 doc.save(`Bill_${new Date().toISOString().slice(0, 10)}.pdf`);
             },
-            x: 75,
+            x: 35,
             y: 10,
             margin: [10, 10, 10, 10], // Margins: top, right, bottom, left
         });
@@ -369,60 +369,73 @@ document.getElementById('downloadPdfBtn').addEventListener('click', async () => 
 
 // ---------------------------------------------------
 
-// Initialize the cart
-let cart = [];
+let cart = []; // Store added products
 
-// Clear product inputs
-function clearProductInputs() {
-    document.querySelector('.product').value = '';
-    document.querySelector('.quantity').value = '';
+// Update Cart Counter
+function updateCartCounter() {
+    const cartCounter = document.getElementById('cartCounter');
+    cartCounter.textContent = cart.length;
+    cartCounter.style.display = cart.length > 0 ? 'block' : 'none';
 }
 
-// Update Cart UI
+// Add Product to Cart
+function addProductToCart() {
+    const productSelect = document.querySelector('.product');
+    const quantityInput = document.querySelector('.quantity');
+    const discountInput = document.querySelector('.item-discount');
+
+    const productName = productSelect.value;
+    const price = prices[productName] || 0;
+    const quantity = parseInt(quantityInput.value, 10);
+    const discount = parseFloat(discountInput.value) || 0;
+
+    if (!productName || isNaN(quantity) || quantity <= 0 || discount < 0 || discount > 100) {
+        alert('Please fill out all product details correctly.');
+        return;
+    }
+
+    // Add Product to Cart Array
+    cart.push({
+        name: productName,
+        price: price,
+        quantity: quantity,
+        discount: discount
+    });
+
+    updateCartCounter();
+    updateCart(); // Update Cart UI
+
+    // Reset Form Fields
+    productSelect.value = '';
+    quantityInput.value = '';
+    discountInput.value = '0';
+
+    // alert(`${productName} added to cart!`);
+}
+
+// Update Cart Details in Modal
 function updateCart() {
     const cartList = document.getElementById('cartList');
     cartList.innerHTML = '';
 
     if (cart.length === 0) {
         cartList.innerHTML = '<li>No products in the cart.</li>';
-        return;
+    } else {
+        cart.forEach((item, index) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                ${item.name} - Qty: ${item.quantity}, Discount: ${item.discount}% 
+                <button class="removeProductBtn" data-index="${index}">Remove</button>
+            `;
+            cartList.appendChild(listItem);
+        });
     }
-
-    cart.forEach((product, index) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            ${product.name} - ₹${product.price.toFixed(2)} (Qty: ${product.quantity})(per-${product.discountedPrice})
-            <button class="removeProductBtn" data-index="${index}">Remove</button>
-        `;
-        cartList.appendChild(listItem);
-    });
-}
-
-// Add Product to Cart
-function addProductToCart() {
-    const productSelect = document.querySelector('.product');
-    const productQuantity = document.querySelector('.quantity').value;
-
-    if (!productSelect.value || productQuantity <= 0) {
-        alert('Please select a product and enter a valid quantity.');
-        return;
-    }
-
-    const product = {
-        name: productSelect.value,
-        price: prices[productSelect.value],
-        quantity: parseInt(productQuantity, 10),
-    };
-
-    cart.push(product);  // Add to Cart
-    clearProductInputs();
-    updateCart();
 }
 
 // Show Cart Modal
 document.getElementById('cartBtn').addEventListener('click', () => {
     document.getElementById('cartModal').style.display = 'block';
-    updateCart();
+    updateCart(); // Refresh Cart Details
 });
 
 // Close Cart Modal
@@ -434,12 +447,13 @@ document.getElementById('closeCartModal').addEventListener('click', () => {
 document.getElementById('cartList').addEventListener('click', (e) => {
     if (e.target.classList.contains('removeProductBtn')) {
         const index = parseInt(e.target.dataset.index, 10);
-        cart.splice(index, 1); // Remove from Cart
-        updateCart();
+        cart.splice(index, 1); // Remove Product from Cart
+        updateCart();  // Update Cart UI
+        updateCartCounter(); // Update Counter
     }
 });
 
-// Generate Bill Button Logic
+// Generate Bill
 document.getElementById('generateBillBtn').addEventListener('click', () => {
     const customerName = document.getElementById('customerName').value.trim();
     const discountInput = parseFloat(document.getElementById('discount').value) || 0;
@@ -451,15 +465,30 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
         return;
     }
 
-    // Calculate Bill Details
-    let subtotal = cart.reduce((acc, p) => acc + (p.price * p.quantity), 0);
-    const total = subtotal - discountInput;
-
+    let subtotal = 0;
     const now = new Date();
     const date = now.toLocaleDateString();
     const time = now.toLocaleTimeString();
 
-    // Render Bill Output
+    // Build Bill Table Rows
+    const billRows = cart.map((product) => {
+        const amount = (product.price * product.quantity * (1 - product.discount / 100)).toFixed(2);
+        subtotal += parseFloat(amount);
+
+        return `
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.quantity}</td>
+                <td>₹${product.price.toFixed(2)}</td>
+                <td>${product.discount}%</td>
+                <td>₹${amount}</td>
+            </tr>
+        `;
+    }).join('');
+
+    const total = subtotal - discountInput;
+
+    // Render Bill
     billOutput.innerHTML = `
         <div class="bill">
             <div class="bill-header">
@@ -480,18 +509,12 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
                         <th>Item</th>
                         <th>Quantity</th>
                         <th>Rate</th>
+                        <th>Discount</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${cart.map(p => `
-                        <tr>
-                            <td>${p.name}</td>
-                            <td>${p.quantity}</td>
-                            <td>₹${p.price.toFixed(2)}</td>
-                            <td>₹${(p.price * p.quantity).toFixed(2)}</td>
-                        </tr>
-                    `).join('')}
+                    ${billRows}
                 </tbody>
             </table>
             <div class="sub-total">
@@ -514,6 +537,13 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
 
     shareOptions.style.display = 'block';
 });
+
+
+// Initial Load
+updateCartCounter();
+
+
+
 
 // Add Product on Button Click
 document.getElementById('addProductBtn').addEventListener('click', addProductToCart);

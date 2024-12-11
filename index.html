@@ -14,7 +14,7 @@
     <div class="container">
       <header>
         <h1>Bill Wala</h1>
-        <p>Generate your bill with ease!</p>
+        <!-- <p>Generate your bill with ease!</p> -->
       </header>
 
       <section class="billing-form">
@@ -39,13 +39,15 @@
         </div>
 
         <button type="button" id="addProductBtn">Add Product</button>
-        <button type="button" id="cartBtn">Cart</button>
+        <button type="button" id="cartBtn" >Cart
+            <span id="cartCounter" class="cart-counter">0</span>
+        </button>
 
         <label for="discount">Overall Discount (₹):</label>
         <input type="number" id="discount" min="0" placeholder="Enter discount (optional)">
         <button type="button" id="generateBillBtn">Generate Bill</button>
     </form>
-</section>
+</section><hr>
 
 
       <section class="bill-display">
