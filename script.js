@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <label>Discount (%)</label>
             <input type="number" class="item-discount" min="0" max="100" value="0">
         `;
-        productRows.appendChild(productRow);
+        productRow.appendChild(productRow);
         refreshProductDropdowns();
     }
 
@@ -170,27 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addProductBtn').addEventListener('click', addProductRow);
 });
 
-
-// Add product row
-function addProductRow() {
-    const productRows = document.getElementById('productRows');
-    const productRow = document.createElement('div');
-    productRow.classList.add('productRow');
-    productRow.innerHTML = `
-        <label>Select Product:</label>
-        <select class="product searchable-dropdown" required></select>
-
-        <label>Enter Quantity:</label>
-        <input type="number" class="quantity" min="1" placeholder="Enter quantity" required>
-
-        <label>Discount (%)</label>
-        <input type="number" class="item-discount" min="0" max="100" value="0">
-    `;
-    productRows.appendChild(productRow);
-    refreshProductDropdowns();
-}
-
-document.getElementById('addProductBtn').addEventListener('click', addProductRow);
 
 // Refresh products and product dropdowns on changes
 refreshProductList();
