@@ -452,6 +452,68 @@ header {
     background-color: #2a5de3;
 }
 
+/* -------------------------menu bar--------------------- */
+
+/* Menu Bar */
+.menu-bar {
+    background: #333;
+    padding: 10px;
+    text-align: center;
+}
+
+.menu-bar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.menu-bar ul li {
+    margin: 0 15px;
+}
+
+.menu-bar ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.menu-bar ul li a:hover {
+    color: #ffb400;
+}
+
+/* Sections */
+section {
+    /* padding: 20px; */
+}
+
+section h2 {
+    color: #333;
+}
+
+.btnGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.btnGroup a {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 4.5vw;
+    text-decoration: none;
+}
+
+
+/* --------------------modal---------------------- */
+
 
 
 

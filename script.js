@@ -439,6 +439,8 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
     const billOutput = document.getElementById('billOutput');
     const shareOptions = document.getElementById('shareOptions');
 
+    const shop = loadShopInfo();
+
     if (cart.length === 0) {
         alert('No products in the cart. Please add products first.');
         return;
@@ -472,8 +474,8 @@ document.getElementById('generateBillBtn').addEventListener('click', () => {
         <div class="bill">
             <div class="bill-header">
                 <div class="bill-header-left">
-                    <h3>Shivam Crackers</h3>
-                    <p>Mobile: +918210012972</p>
+                    <h3>${shop.name}</h3>
+                    <p>Mobile: ${shop.phone}</p>
                 </div>
                 <div class="bill-header-right">
                     <p>Invoice Date: ${date}</p>
@@ -523,13 +525,61 @@ updateCartCounter();
 
 
 
-
 // Add Product on Button Click
 document.getElementById('addProductBtn').addEventListener('click', addProductToCart);
 
- 
+//  ----------------------SHOP SETUP----------------------------
+   
+
+// Save Shop Info
+document.getElementById('saveShopBtn').addEventListener('click', () => {
+    const shopName = document.getElementById('shopName').value.trim();
+    const shopPhone = document.getElementById('shopPhone').value.trim();
+    const shopAddress = document.getElementById('shopAddress').value.trim();
+
+    if (!shopName || !shopPhone || !shopAddress) {
+        alert('Please fill out all shop details.');
+        return;
+    }
+
+    // Save to localStorage
+    localStorage.setItem('shopInfo', JSON.stringify({
+        name: shopName,
+        phone: shopPhone,
+        address: shopAddress,
+    }));
+
+    alert('Shop information saved!');
+});
+
+
+function loadShopInfo() {
+    const shopInfo = JSON.parse(localStorage.getItem('shopInfo'));
+
+    if (!shopInfo) {
+        alert('Shop information is missing. Please set it up first.');
+        return {
+            name: 'Your Shop Name',
+            phone: 'Your Phone Number',
+            address: 'Your Address',
+        };
+    }
+
+    return shopInfo;
+}
+
+
+
+
+// -------------------------------------------------
 
 
 // Initial load
 refreshProductList();
 refreshProductDropdowns();
+
+// -------------------------------modal----------------------
+
+
+
+// ------------------------------register-------------------------
